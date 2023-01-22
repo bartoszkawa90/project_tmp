@@ -9,15 +9,13 @@ static uint16_t upSampleCNT = 0;
 static uint16_t sampleCNT = 0;
 uint8_t  playFlag = 0;    //  troche zbedna
 
-const uint16_t  SAMPLES = 200;
-uint8_t speed = 1;
-uint32_t TIME_END = 1309360;//163670;
+const uint16_t  SAMPLES = 200;   // rozmiar tablicy przyjmujacej dane z UART
+uint8_t speed = 34;  // poczatkowa wartosc predkosci z 
+uint32_t TIME_END = 1309360;//163670;  zmienna wykorzystywana przy kontroli czasu z jakim gra dana nuta
 int32_t timer = 0;
-uint8_t play_index = 0;
+uint8_t play_index = 0;  // index wykorzystywany do wyciagania danych z tablicy sygnalu
 
-uint8_t what_to_play = 0;
-uint8_t signal[SAMPLES];
-//char signal[CONTROL_SAMPLES] = {0,8, 1,8, 2,8, 3,8, 4,8, 5,8, 6,8, 7,8};
+uint8_t signal[SAMPLES];  // sygnal do którego przychodza dane przez UART
 
 
 void TPM0_Init_PCM(void) {
@@ -55,45 +53,22 @@ void TPM0_Init_PCM(void) {
 	//tpm0Enabled = 1;  // set local flag 
 }
 
-void TPM0_PCM_Play(uint8_t song) {
-	sampleCNT = 0;   // start from the beginning 
-	playFlag = 1;    //  troche zbedna
+void TPM0_PCM_Play(){
+	sampleCNT = 0;   // zacznij od poczatku
+	playFlag = 1;    //  graj
 	speed = signal[play_index];
-	what_to_play = song;
 }
 
 void TPM0_IRQHandler(void) {
 	if (playFlag) {
-		if ( what_to_play == 1){
-		
-			if (upSampleCNT == 0) {
-				sampleCNT = sampleCNT+speed; // +4 leci 4 razy szybciej   4 x f
-				TPM0->CONTROLS[2].CnV = SIN[sampleCNT]; // load new sample
-			}
-			if (sampleCNT > sizeof(SIN)){ //WAVE1_SAMPLES) {
-				//playFlag = 0;         // stop if at the end
-				//TPM0->CONTROLS[2].CnV = 0;
-				sampleCNT = 0;
-			}
-			// 40,96kHz / 10 ~ 4,1kHz ~ WAVE_RATE
-			if (++upSampleCNT > (UPSAMPLING-1)) upSampleCNT = 0;
-		}
-		
-		
-	/*
-	else if (what_to_play == 2 ){
-		if (playFlag) {
-			if (upSampleCNT == 0) TPM0->CONTROLS[2].CnV = signal[sampleCNT++]; // load new sample
-			if (sampleCNT > sizeof(signal)){ //WAVE1_SAMPLES) {
-				playFlag = 0;         // stop if at the end
-				TPM0->CONTROLS[2].CnV = 0;
-			}
-			// 40,96kHz / 10 ~ 4,1kHz ~ WAVE_RATE
-			if (++upSampleCNT > (UPSAMPLING-1)) upSampleCNT = 0;
-		}
-	}*/
+	
+		// granie wartosciami z tablicy sinusa / 
+		sampleCNT = sampleCNT+speed; 
+		TPM0->CONTROLS[2].CnV = SIN[sampleCNT]; // load new sample
+		if (sampleCNT > 15999) sampleCNT = 0;
 	
 	
+		// kontrola czasu i wybierania grajacej w danym momencie nuty z tablicy otrzymanej z komputera przez UART
 		if ( signal[play_index] == 0){
 			play_index += 2;
 		}
@@ -112,6 +87,7 @@ void TPM0_IRQHandler(void) {
 	}
 	TPM0->CONTROLS[0].CnSC |= TPM_CnSC_CHF_MASK; 
 }
+
 
 
 

@@ -37,6 +37,16 @@ char Error[]="Zla komenda";
 char Checked[] = "Connection works";
 char Too_Long[]="Zbyt dlugi ciag";
 
+uint16_t non_zero_samples(){
+	uint16_t non0samples;
+	for (int n=0;n<SAMPLES;n++){
+		if (signal[n] == 0){
+			break;
+		}
+		non0samples = n;
+	}
+	return non0samples;
+}
 
 void clear_command(){
 	for(uint8_t c; c<16; c++){
@@ -58,7 +68,6 @@ void clear_all(){
 }
 
 void stop(){
-	TPM0_PCM_Play(0);
 	LCD1602_SetCursor(0,1);
 	LCD1602_Print("Stopped         ");
 	playFlag = 0;
@@ -67,7 +76,7 @@ void stop(){
 void play(){
 	LCD1602_SetCursor(0,1);
 	LCD1602_Print("Playing ...     ");
-	TPM0_PCM_Play(1); 
+	TPM0_PCM_Play(); 
 }
 
 void back_to_beginning(){
@@ -90,7 +99,7 @@ void UART0_IRQHandler()
 		else if ( temp == COMMAND && com == 0) com = 1;
 		else 
 		{
-			// Read signal
+			// odczyt sygnalu
 			if (read==1 && com==0) 
 			{
 				if(!rx_FULL)
@@ -114,7 +123,7 @@ void UART0_IRQHandler()
 					}
 				}
 			}
-			// Read comand
+			// Odczyt komendy
 			if (read==1 && com==1) 
 			{
 				if(!rx_FULL)
@@ -151,9 +160,10 @@ int main(void)
 	//data = malloc(16000);
 	char a[] = {(char)speed};
 	uint8_t current_slider;
-	int32_t current_timer = 0;
 	uint8_t slider = 0;
-	LED_Init();
+	
+	// INICJALIZACJE
+	//LED_Init();
 	LCD1602_Init();		 // Inicjalizacja wyswietlacza 
 	LCD1602_Backlight(TRUE);
 	LCD1602_SetCursor(0,1);
@@ -168,24 +178,28 @@ int main(void)
 		sprintf(a,"Frequency =  %2d",frequencies[signal[play_index]]);		
 		LCD1602_Print(a);
 		LCD1602_SetCursor(0,1);
-		sprintf(a,"Signal  =  %2d",signal[20]);		
+		sprintf(a,"Signal  =  %2d",signal[play_index]);		
 		LCD1602_Print(a);
 		
+		uint16_t non0samples = non_zero_samples();
 		
 		// SLIDER   z   mozliwoscia  play/stop i przewijania
 		current_slider = TSI_ReadSlider();
 		
 		if ( current_slider != slider){
+			slider = current_slider;
+			
 			if (current_slider > 80){
 				if ( playFlag == 1 ) stop();
-				else TPM0_PCM_Play(1);
+				else TPM0_PCM_Play();
 			}
-			slider = current_slider;
-			play_index = round((slider/80) * SAMPLES);
+			else{
+				play_index = round((slider/80) * non0samples);
+			}
 		}
 		
 		
-		//  SENDING RESPONSE
+		//  Odsylanie bajtu w celu sprawdzenia polaczenia
 		if ( check == 1){
 			for(i=0;Checked[i]!=0;i++)	// Zla komenda
 			{
