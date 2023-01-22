@@ -28,20 +28,38 @@ Project File Date:  01/21/2023
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Target 1'
 compiling main.c...
-main.c(118): warning:  #223-D: function "LCD1602_Init" declared implicitly
-  	LCD1602_Init();		 // Inicjalizacja wyswietlacza 
-main.c(119): warning:  #223-D: function "LCD1602_Backlight" declared implicitly
-  	LCD1602_Backlight(TRUE);
-main.c(120): warning:  #223-D: function "LCD1602_SetCursor" declared implicitly
+main.c(51): warning:  #223-D: function "LCD1602_SetCursor" declared implicitly
   	LCD1602_SetCursor(0,1);
-main.c(129): warning:  #223-D: function "sprintf" declared implicitly
-  		sprintf(a,"Frequency = %2d",frequencies[signal[play_index]]);		
-main.c(130): warning:  #223-D: function "LCD1602_Print" declared implicitly
+main.c(52): warning:  #223-D: function "LCD1602_Print" declared implicitly
+  	LCD1602_Print("Data Cleared    ");
+main.c(62): warning:  #223-D: function "LCD1602_SetCursor" declared implicitly
+  	LCD1602_SetCursor(0,1);
+main.c(63): warning:  #223-D: function "LCD1602_Print" declared implicitly
+  	LCD1602_Print("Stopped         ");
+main.c(68): warning:  #223-D: function "LCD1602_SetCursor" declared implicitly
+  	LCD1602_SetCursor(0,1);
+main.c(69): warning:  #223-D: function "LCD1602_Print" declared implicitly
+  	LCD1602_Print("Playing ...     ");
+main.c(74): warning:  #223-D: function "LCD1602_SetCursor" declared implicitly
+  	LCD1602_SetCursor(0,1);
+main.c(75): warning:  #223-D: function "LCD1602_Print" declared implicitly
+  	LCD1602_Print("Back to start   ");
+main.c(157): warning:  #223-D: function "LCD1602_Init" declared implicitly
+  	LCD1602_Init();		 // Inicjalizacja wyswietlacza 
+main.c(158): warning:  #223-D: function "LCD1602_Backlight" declared implicitly
+  	LCD1602_Backlight(TRUE);
+main.c(159): warning:  #223-D: function "LCD1602_SetCursor" declared implicitly
+  	LCD1602_SetCursor(0,1);
+main.c(168): warning:  #223-D: function "sprintf" declared implicitly
+  		sprintf(a,"Frequency =  %2d",frequencies[signal[play_index]]);		
+main.c(169): warning:  #223-D: function "LCD1602_Print" declared implicitly
   		LCD1602_Print(a);
-main.c: 5 warnings, 0 errors
+main.c(154): warning:  #177-D: variable "current_timer"  was declared but never referenced
+  	int32_t current_timer = 0;
+main.c: 14 warnings, 0 errors
 linking...
-Program Size: Code=5500 RO-data=16236 RW-data=176 ZI-data=1336  
-".\Objects\proj.axf" - 0 Error(s), 5 Warning(s).
+Program Size: Code=7648 RO-data=16236 RW-data=176 ZI-data=1336  
+".\Objects\proj.axf" - 0 Error(s), 14 Warning(s).
 
 <h2>Software Packages used:</h2>
 

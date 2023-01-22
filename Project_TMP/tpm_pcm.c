@@ -12,7 +12,7 @@ uint8_t  playFlag = 0;    //  troche zbedna
 const uint16_t  SAMPLES = 200;
 uint8_t speed = 1;
 uint32_t TIME_END = 1309360;//163670;
-uint32_t timer = 0;
+int32_t timer = 0;
 uint8_t play_index = 0;
 
 uint8_t what_to_play = 0;

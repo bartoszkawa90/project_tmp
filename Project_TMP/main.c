@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "tsi.h"
+#include <math.h>
 
 
 // IMPORTANT
@@ -20,6 +21,7 @@ char command[16];
 uint16_t rx_sig_pos=0;
 uint8_t rx_com_pos=0;
 char temp;
+uint8_t i;
 uint8_t rx_FULL=0;
 uint8_t too_long=0;
 uint8_t  check = 0;
@@ -41,6 +43,42 @@ void clear_command(){
 		command[c] = 0;
 	}
 }
+
+void clear_all(){
+	for ( i=0;i<SAMPLES;i++){
+		signal[i] = 0;
+	}
+	LCD1602_SetCursor(0,1);
+	LCD1602_Print("Data Cleared    ");
+	speed = 34;
+	timer = 0;
+	play_index = 0;
+	playFlag = 0;
+	clear_command();
+}
+
+void stop(){
+	TPM0_PCM_Play(0);
+	LCD1602_SetCursor(0,1);
+	LCD1602_Print("Stopped         ");
+	playFlag = 0;
+}
+
+void play(){
+	LCD1602_SetCursor(0,1);
+	LCD1602_Print("Playing ...     ");
+	TPM0_PCM_Play(1); 
+}
+
+void back_to_beginning(){
+	LCD1602_SetCursor(0,1);
+	LCD1602_Print("Back to start   ");
+	speed = 34;
+	timer = 0;
+	play_index = 0;
+	playFlag = 0;
+}
+
 
 void UART0_IRQHandler()
 {
@@ -112,7 +150,8 @@ int main(void)
 {	
 	//data = malloc(16000);
 	char a[] = {(char)speed};
-	uint8_t i, current_slider;
+	uint8_t current_slider;
+	int32_t current_timer = 0;
 	uint8_t slider = 0;
 	LED_Init();
 	LCD1602_Init();		 // Inicjalizacja wyswietlacza 
@@ -126,28 +165,24 @@ int main(void)
 	while(1)	
 	{
 		LCD1602_SetCursor(0,0);
-		sprintf(a,"Frequency = %2d",frequencies[signal[play_index]]);		
+		sprintf(a,"Frequency =  %2d",frequencies[signal[play_index]]);		
 		LCD1602_Print(a);
 		LCD1602_SetCursor(0,1);
 		sprintf(a,"Signal  =  %2d",signal[20]);		
 		LCD1602_Print(a);
 		
 		
-		// SLIDER 
+		// SLIDER   z   mozliwoscia  play/stop i przewijania
 		current_slider = TSI_ReadSlider();
 		
 		if ( current_slider != slider){
+			if (current_slider > 80){
+				if ( playFlag == 1 ) stop();
+				else TPM0_PCM_Play(1);
+			}
 			slider = current_slider;
-			play_index = slider;
+			play_index = round((slider/80) * SAMPLES);
 		}
-		
-		/*if ( slider > 0 & slider < 40 ){
-			TPM0_PCM_Play(1);
-		}
-		else if (slider > 56 & slider < 100){
-			TPM0_PCM_Play(0);
-			playFlag = 0;
-		}*/
 		
 		
 		//  SENDING RESPONSE
@@ -179,35 +214,16 @@ int main(void)
 			else
 			{
 				if(strcmp (command,PLAY)==0){ 
-						LCD1602_SetCursor(0,1);
-						LCD1602_Print("Playing ...     ");
-						TPM0_PCM_Play(1); 
+						play();
 				}
 				else if (strcmp (command,GOBACK)==0){
-						LCD1602_SetCursor(0,1);
-						LCD1602_Print("Back to start   ");
-						speed = 34;
-						timer = 0;
-						play_index = 0;
-						playFlag = 0;
+						back_to_beginning();
 				}
 				else if (strcmp (command,STOP)==0){
-						TPM0_PCM_Play(0);
-						LCD1602_SetCursor(0,1);
-						LCD1602_Print("Stopped         ");
-						playFlag = 0;
+						stop();
 				}
 				else if (strcmp (command,CLEAR_ALL)==0){
-						for ( i=0;i<SAMPLES;i++){
-								signal[i] = 0;
-						}
-						LCD1602_SetCursor(0,1);
-						LCD1602_Print("Data Cleared    ");
-						speed = 34;
-						timer = 0;
-						play_index = 0;
-						playFlag = 0;
-						clear_command();
+						clear_all();
 				}
 				else
 				{

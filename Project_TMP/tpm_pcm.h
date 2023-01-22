@@ -26,7 +26,7 @@ void TPM0_Init_PCM(void);
 void TPM0_PCM_Play(uint8_t song);
 extern uint8_t signal[];
 extern uint8_t speed;
-extern uint32_t timer;
+extern int32_t timer;
 extern uint32_t TIME;
 extern uint8_t play_index;
 extern uint8_t playFlag;
