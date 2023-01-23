@@ -164,25 +164,23 @@ int main(void)
 	uint16_t non0samples;
 	
 	// INICJALIZACJE
-	//LED_Init();
 	LCD1602_Init();		 // Inicjalizacja wyswietlacza 
 	LCD1602_Backlight(TRUE);
 	LCD1602_SetCursor(0,1);
 	UART0_Init();		// Inicjalizacja  UART0
-	//LCD1602_Print("Send song ...");
-	TPM0_Init_PCM ();
-	TSI_Init ();
+	TPM0_Init_PCM ();  // Inicjalizacja TPM0
+	TSI_Init ();  // Inicjalizacja Slidera
 	
 	while(1)	
 	{
 		LCD1602_SetCursor(0,0);
-		sprintf(a,"Frequency =  %2d",slider);		
+		sprintf(a,"Frequency =  %2d",frequencies[signal[play_index]]);		
 		LCD1602_Print(a);
 		LCD1602_SetCursor(0,1);
 		sprintf(a,"Index  =  %2d",play_index);		
 		LCD1602_Print(a);
 		
-		non0samples = non_zero_samples();
+		non0samples = non_zero_samples();  // sprawdzanie rozmiaru odebranego sygnalu
 		
 		// SLIDER   z   mozliwoscia  play/stop i przewijania
 		current_slider = TSI_ReadSlider();
@@ -256,17 +254,5 @@ int main(void)
 			rx_sig_pos = 0;
 			rx_FULL=0;	// Dana skonsumowana
 		}
-		/*if ( signal[0] != 0 && command[0] != 0){
-			LCD1602_SetCursor(0,2);
-			LCD1602_Print("Com & Sig  ");
-		}
-		else if( signal[0] == 0 && command[0] != 0){
-			LCD1602_SetCursor(0,2);
-			LCD1602_Print("Only Com  ");
-		}
-		else {
-			LCD1602_SetCursor(0,2);
-			LCD1602_Print("Only Sig  ");
-		}*/
 	}
 }
