@@ -11,9 +11,9 @@ uint8_t  playFlag = 0;    //  troche zbedna
 
 const uint16_t  SAMPLES = 200;   // rozmiar tablicy przyjmujacej dane z UART
 uint8_t speed = 34;  // poczatkowa wartosc predkosci z 
-uint32_t TIME_END = 1309360;//163670;  zmienna wykorzystywana przy kontroli czasu z jakim gra dana nuta
+uint32_t TIME_END = 1309360;//163670 = 1s;  zmienna wykorzystywana przy kontroli czasu z jakim gra dana nuta
 int32_t timer = 0;
-uint8_t play_index = 0;  // index wykorzystywany do wyciagania danych z tablicy sygnalu
+uint16_t play_index = 0;  // index wykorzystywany do wyciagania danych z tablicy sygnalu
 
 uint8_t signal[SAMPLES];  // sygnal do którego przychodza dane przez UART
 

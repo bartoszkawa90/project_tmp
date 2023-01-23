@@ -159,8 +159,9 @@ int main(void)
 {	
 	//data = malloc(16000);
 	char a[] = {(char)speed};
-	uint8_t current_slider;
-	uint8_t slider = 0;
+	uint16_t current_slider;
+	uint16_t slider = 0;
+	uint16_t non0samples;
 	
 	// INICJALIZACJE
 	//LED_Init();
@@ -175,18 +176,18 @@ int main(void)
 	while(1)	
 	{
 		LCD1602_SetCursor(0,0);
-		sprintf(a,"Frequency =  %2d",frequencies[signal[play_index]]);		
+		sprintf(a,"Frequency =  %2d",slider);		
 		LCD1602_Print(a);
 		LCD1602_SetCursor(0,1);
-		sprintf(a,"Signal  =  %2d",signal[play_index]);		
+		sprintf(a,"Index  =  %2d",play_index);		
 		LCD1602_Print(a);
 		
-		uint16_t non0samples = non_zero_samples();
+		non0samples = non_zero_samples();
 		
 		// SLIDER   z   mozliwoscia  play/stop i przewijania
 		current_slider = TSI_ReadSlider();
 		
-		if ( current_slider != slider){
+		if ( current_slider != slider & current_slider != 0){
 			slider = current_slider;
 			
 			if (current_slider > 80){
@@ -194,7 +195,8 @@ int main(void)
 				else TPM0_PCM_Play();
 			}
 			else{
-				play_index = round((slider/80) * non0samples);
+				play_index = round(slider* non0samples/80);
+				if (play_index % 2 != 0) play_index +=1;
 			}
 		}
 		

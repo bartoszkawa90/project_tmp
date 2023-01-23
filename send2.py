@@ -12,6 +12,10 @@ panie_janie = [4,16, 5,16, 6,16, 4,16, 4,16, 5,16, 6,16, 4,16,     6,16, 7,16, 8
 print("1 Rozmiar " , len(wlazl_kotek) , "   2 Rozmiar " , len(panie_janie))
 songs = {"wlazl kotek" : wlazl_kotek , "panie janie" : panie_janie}
 
+# KOMENDY
+print("Komendy : " + "\n" + " play - zagranie wysłaną piosenką" + "\n" + " clear - wyczyszczenie tablicy sygnału na płytce" + "\n" + " send <nazwa_piosenki> - wysłanie piosenki na płytkę" 
+      + "\n" + " stop - zatrzymanie aktualnie granej piosenki" + "\n" +  " back to beginning - powrót na początek piosenki")
+
 print("\nPiosenki : ")
 for i in songs.keys(): print(" ", i)
 
