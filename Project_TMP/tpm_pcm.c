@@ -1,13 +1,11 @@
 #include "tpm_pcm.h"
 #include "wave1.h"
 
-#define UPSAMPLING 1
 void TPM0_IRQHandler(void);
 //static uint8_t tpm0Enabled = 0;
 
-static uint16_t upSampleCNT = 0;
 static uint16_t sampleCNT = 0;
-uint8_t  playFlag = 0;    //  troche zbedna
+uint8_t  playFlag = 0;  
 
 const uint16_t  SAMPLES = 200;   // rozmiar tablicy przyjmujacej dane z UART
 uint8_t speed = 34;  // poczatkowa wartosc predkosci z 
@@ -54,9 +52,9 @@ void TPM0_Init_PCM(void) {
 }
 
 void TPM0_PCM_Play(){
-	sampleCNT = 0;   // zacznij od poczatku
+	sampleCNT = 0;   // zacznij od poczatku tablicy sinusa
 	playFlag = 1;    //  graj
-	speed = signal[play_index];
+	speed = signal[play_index];  // moment piosenki zostaje tam gdzie sie zatrzymalo
 }
 
 void TPM0_IRQHandler(void) {
@@ -65,7 +63,7 @@ void TPM0_IRQHandler(void) {
 		// granie wartosciami z tablicy sinusa / 
 		sampleCNT = sampleCNT+speed; 
 		TPM0->CONTROLS[2].CnV = SIN[sampleCNT]; // load new sample
-		if (sampleCNT > 15999) sampleCNT = 0;
+		if (sampleCNT > 15999) sampleCNT = 0; // zerowanie indexu jak dojdzie do konca tablicy
 	
 	
 		// kontrola czasu i wybierania grajacej w danym momencie nuty z tablicy otrzymanej z komputera przez UART

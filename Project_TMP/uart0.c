@@ -17,6 +17,6 @@ void UART0_Init(void)
 	UART0->C2 |= UART0_C2_RIE_MASK;		// Włącz przerwania od odbiornika
 	UART0->C2 |= (UART0_C2_TE_MASK | UART0_C2_RE_MASK);		//Włącz nadajnik i odbiornik
 	NVIC_EnableIRQ(UART0_IRQn);
-	NVIC_ClearPendingIRQ(UART0_IRQn);
+	NVIC_ClearPendingIRQ(UART0_IRQn);  // czyści status pending ( stan przerwania, gdy zostało ono wywołane, ale nie zostało jeszcze obsłużone przez mikrokontroler )
 }
 

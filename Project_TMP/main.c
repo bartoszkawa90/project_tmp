@@ -11,20 +11,20 @@
 
 // IMPORTANT
 #define LF	0xa
-#define READ  0x1
+#define READ  0xf
 #define COMMAND  0xcc
 #define CHECK_CON  0xc
 
-char read = 0;
-char com = 0;
-char command[16];
 uint16_t rx_sig_pos=0;
 uint8_t rx_com_pos=0;
-char temp;
 uint8_t i;
 uint8_t rx_FULL=0;
 uint8_t too_long=0;
 uint8_t  check = 0;
+char read = 0;
+char com = 0;
+char command[16];
+char temp;
 char PLAY[] = ">";
 char GOBACK[] = "!";
 char STOP[] = "|";
@@ -33,9 +33,7 @@ char CLEAR_ALL[] = "!!!";
 // ADDITIONAL
 uint16_t frequencies[] = {350, 401, 452, 502, 553, 604, 654, 704};
 // czestotliwosci do wyswitlania w Hz
-char Error[]="Zla komenda";
 char Checked[] = "Connection works";
-char Too_Long[]="Zbyt dlugi ciag";
 
 uint16_t non_zero_samples(){
 	uint16_t non0samples;
@@ -152,18 +150,18 @@ void UART0_IRQHandler()
 	}
 }
 
-//uint8_t* data;
+
 
 
 int main(void)
 {	
-	//data = malloc(16000);
 	char a[] = {(char)speed};
 	uint16_t current_slider;
 	uint16_t slider = 0;
 	uint16_t non0samples;
 	
 	// INICJALIZACJE
+	LED_Init();
 	LCD1602_Init();		 // Inicjalizacja wyswietlacza 
 	LCD1602_Backlight(TRUE);
 	LCD1602_SetCursor(0,1);
@@ -173,18 +171,19 @@ int main(void)
 	
 	while(1)	
 	{
+		
+		// Wyswietlacz wartosci slidera i indexu sygnalu który jest grany w danej chwili
 		LCD1602_SetCursor(0,0);
-		sprintf(a,"Frequency =  %2d",frequencies[signal[play_index]]);		
+		sprintf(a,"Slider =  %2d",slider);		
 		LCD1602_Print(a);
 		LCD1602_SetCursor(0,1);
-		sprintf(a,"Index  =  %2d",play_index);		
+		sprintf(a,"Sig_Index  =  %2d",play_index);		
 		LCD1602_Print(a);
 		
 		non0samples = non_zero_samples();  // sprawdzanie rozmiaru odebranego sygnalu
 		
 		// SLIDER   z   mozliwoscia  play/stop i przewijania
 		current_slider = TSI_ReadSlider();
-		
 		if ( current_slider != slider & current_slider != 0){
 			slider = current_slider;
 			
@@ -197,7 +196,6 @@ int main(void)
 				if (play_index % 2 != 0) play_index +=1;
 			}
 		}
-		
 		
 		//  Odsylanie bajtu w celu sprawdzenia polaczenia
 		if ( check == 1){
@@ -216,19 +214,13 @@ int main(void)
 		{
 			if(too_long)
 			{
-				for(i=0;Too_Long[i]!=0;i++)	// Zbyt dlugi ciag
-					{
-						while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
-						UART0->D = Too_Long[i];
-					}
-					while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
-					UART0->D = 0xa;		// Nastepna linia
-					too_long=0;
+					// gdy sygnal jest za dlugi
+					LED_Ctrl(LED_GREEN, LED_OFF);
 			}
-			else
+			else  // wybrana komenda
 			{
 				if(strcmp (command,PLAY)==0){ 
-						play();
+						if (signal[0] != 0) play();
 				}
 				else if (strcmp (command,GOBACK)==0){
 						back_to_beginning();
@@ -239,16 +231,7 @@ int main(void)
 				else if (strcmp (command,CLEAR_ALL)==0){
 						clear_all();
 				}
-				else
-				{
-						for(i=0;Error[i]!=0;i++)	// Zla komenda
-						{
-							while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
-							UART0->D = Error[i];
-						}
-						while(!(UART0->S1 & UART0_S1_TDRE_MASK));	// Czy nadajnik gotowy?
-						UART0->D = 0xa;		// Nastepna linia
-					}
+				LED_Ctrl(LED_GREEN, LED_ON);  // odebranie komendy ale nie odtwarzanie
 				}
 			rx_com_pos = 0;
 			rx_sig_pos = 0;

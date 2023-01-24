@@ -27,7 +27,37 @@ Project File Date:  01/21/2023
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Target 1'
-".\Objects\proj.axf" - 0 Error(s), 0 Warning(s).
+compiling main.c...
+main.c(59): warning:  #223-D: function "LCD1602_SetCursor" declared implicitly
+  	LCD1602_SetCursor(0,1);
+main.c(60): warning:  #223-D: function "LCD1602_Print" declared implicitly
+  	LCD1602_Print("Data Cleared    ");
+main.c(69): warning:  #223-D: function "LCD1602_SetCursor" declared implicitly
+  	LCD1602_SetCursor(0,1);
+main.c(70): warning:  #223-D: function "LCD1602_Print" declared implicitly
+  	LCD1602_Print("Stopped         ");
+main.c(75): warning:  #223-D: function "LCD1602_SetCursor" declared implicitly
+  	LCD1602_SetCursor(0,1);
+main.c(76): warning:  #223-D: function "LCD1602_Print" declared implicitly
+  	LCD1602_Print("Playing ...     ");
+main.c(81): warning:  #223-D: function "LCD1602_SetCursor" declared implicitly
+  	LCD1602_SetCursor(0,1);
+main.c(82): warning:  #223-D: function "LCD1602_Print" declared implicitly
+  	LCD1602_Print("Back to start   ");
+main.c(165): warning:  #223-D: function "LCD1602_Init" declared implicitly
+  	LCD1602_Init();		 // Inicjalizacja wyswietlacza 
+main.c(166): warning:  #223-D: function "LCD1602_Backlight" declared implicitly
+  	LCD1602_Backlight(TRUE);
+main.c(167): warning:  #223-D: function "LCD1602_SetCursor" declared implicitly
+  	LCD1602_SetCursor(0,1);
+main.c(177): warning:  #223-D: function "sprintf" declared implicitly
+  		sprintf(a,"Slider =  %2d",slider);		
+main.c(178): warning:  #223-D: function "LCD1602_Print" declared implicitly
+  		LCD1602_Print(a);
+main.c: 13 warnings, 0 errors
+linking...
+Program Size: Code=7636 RO-data=16236 RW-data=144 ZI-data=1336  
+".\Objects\proj.axf" - 0 Error(s), 13 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -53,8 +83,8 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE:5.6.0
 
    * Component: Keil::Device:Startup:1.0.0
-      Source file:   Device\Source\ARM\startup_MKL05Z4.s
       Source file:   Device\Source\system_MKL05Z4.c
+      Source file:   Device\Source\ARM\startup_MKL05Z4.s
 Build Time Elapsed:  00:00:00
 </pre>
 </body>
